@@ -10,8 +10,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Store session (gunakan secret key production-ready di env)
-var store = sessions.NewCookieStore([]byte("secret-key-anda"))
+var store = sessions.NewCookieStore([]byte("secret"))
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	var userInput models.User
@@ -43,7 +42,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
-	//
+
 	var userInput models.User
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&userInput); err != nil {
