@@ -6,18 +6,7 @@ Anda diminta untuk merancang sebuah sistem E-Ticketing Transportasi Publik yang 
 
 ### 1. Gambarkan desain rancangan anda
 
-+-------------------+        +---------------------+        +-------------------+
-| Terminal A (Gate) |<----->|      Server/API     |<-----> | Terminal E (Gate) |
-|   Validator       |        |  (Central Backend)  |        |   Validator       |
-+-------------------+        +---------------------+        +-------------------+
-        |                                                        |
-        |                                                        |
-        v                                                        v
-+-------------------+        +---------------------+        +-------------------+
-|  Kartu Prepaid    |<----->| Reader/Encoder Unit |<-----> |  Kartu Prepaid    |
-|   (RFID/NFC)      |        |  (On gate machine)  |        |   (RFID/NFC)      |
-+-------------------+        +---------------------+        +-------------------+
-
+![Gambar Rancangan Sistem](Rancangan-Sistem.jpg)
 
 ### 2. Ceritakan rancangan anda dengan jelas saat ada jaringan internet
 
