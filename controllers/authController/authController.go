@@ -6,11 +6,40 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Store session (gunakan secret key production-ready di env)
+var store = sessions.NewCookieStore([]byte("secret-key-anda"))
+
 func Login(w http.ResponseWriter, r *http.Request) {
-	//
+	var userInput models.User
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&userInput); err != nil {
+		http.Error(w, "Gagal decode input", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	var user models.User
+	if err := models.DB.Where("email = ?", userInput.Email).First(&user).Error; err != nil {
+		http.Error(w, "Email tidak ditemukan", http.StatusUnauthorized)
+		return
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userInput.Password)); err != nil {
+		http.Error(w, "Password salah", http.StatusUnauthorized)
+		return
+	}
+
+	session, _ := store.Get(r, "session-id")
+	session.Values["user_id"] = user.Id
+	session.Save(r, w)
+
+	response, _ := json.Marshal(map[string]string{"message": "Login berhasil"})
+	w.Header().Add("Content-Type", "application/json")
+	w.Write(response)
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -36,5 +65,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	//
+	session, _ := store.Get(r, "session-id")
+	session.Options.MaxAge = -1
+	session.Save(r, w)
+
+	response, _ := json.Marshal(map[string]string{"message": "Logout berhasil"})
+	w.Header().Add("Content-Type", "application/json")
+	w.Write(response)
 }
